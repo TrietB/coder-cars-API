@@ -10,6 +10,9 @@ router.get('/', getCars);
 
 // UPDATE
 router.put('/:id', editCar);
+// router.put('/:id', (req,res,next)=> {
+//     console.log(req.params)
+// })
 
 // // DELETE
 router.delete('/:id', deleteCar);
