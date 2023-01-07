@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongoose_delete = require('mongoose-delete')
 const carSchema = new mongoose.Schema(
 	{
 		make: {
@@ -32,7 +33,7 @@ const carSchema = new mongoose.Schema(
 			type: Number,
 			required: true,
 		},
-		isDeleted: { type: Boolean, default: false, required: true },
+		// isDeleted: { type: Boolean, default: false, required: true },
 	},
 	{
 		timestamps: true,
@@ -54,6 +55,9 @@ carSchema.pre(/^find/, function (next) {
 	next();
 });
 
-const Car = mongoose.model('Car', carSchema);
+carSchema.plugin(mongoose_delete)
+
+const Car = mongoose.model('Cars', carSchema);
+
 
 module.exports = Car;

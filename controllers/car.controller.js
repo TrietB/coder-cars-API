@@ -37,11 +37,13 @@ carController.getCars = async (req, res, next) => {
 		page = parseInt(page) || 1
 		let limit = 10
 		let offset = limit * (page - 1)
-		const cars = await Car.find({})
+		const cars = await Car.find({deleted:false}).sort({createdAt: -1})
 		const totalPages = parseInt(cars.length / 10)
 		let result = cars.slice(offset, offset + limit)
+		console.log(cars.length)
+		
 		// const listOfFound = await Car.find(filter)
-		sendResponse(res,200,true,{cars:result},null,{ message: "Found list of cars success", totalPages})
+		sendResponse(res,200,true,{cars:result, total: totalPages},null,{ message: "Found list of cars success", totalPages, page})
 	} catch (err) {
 		next(err)
 	}
@@ -56,7 +58,7 @@ carController.editCar = async (req, res, next) => {
 	try {
 		const updated= await Car.findByIdAndUpdate(id,updateInfo,options)
 
-        sendResponse(res,200,true,{data:updated},null,"Update car success")
+        sendResponse(res,200,true,{car:updated},null,"Update car success")
 	} catch (err) {
 		next(err)
 	}
@@ -65,11 +67,12 @@ carController.editCar = async (req, res, next) => {
 carController.deleteCar = async (req, res, next) => {
 	const {id} = req.params
 	const options = {new:true}
+	const updated = {deleted:true}
 	console.log(id)
 	try {
-		const updated= await Car.findByIdAndDelete(id,options)
-
-        sendResponse(res,200,true,{data:updated},null,"Delete foo success")
+		const targetCar = await Car.findById(id)
+		await targetCar.delete()
+        sendResponse(res,200,true,{car:targetCar},null,"Delete foo success")
 	} catch (err) {
 		next(err)
 	}
